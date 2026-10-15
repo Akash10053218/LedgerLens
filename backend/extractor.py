@@ -42,7 +42,7 @@ class DocumentExtractor:
     def extract_text_from_image(self, file_bytes: bytes) -> str:
         """Attempts Tesseract OCR if available, else returns metadata placeholder."""
         try:
-            import pytesseract
+            import pytesseract  # type: ignore
             image = Image.open(io.BytesIO(file_bytes))
             return pytesseract.image_to_string(image)
         except Exception:
