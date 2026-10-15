@@ -11,7 +11,7 @@ import io
 import json
 import logging
 from typing import Dict, Any, Optional, Tuple, List
-from datetime import datetime
+from datetime import datetime, timezone
 import httpx
 from pypdf import PdfReader
 from PIL import Image
@@ -298,7 +298,7 @@ DOCUMENT TEXT:
         return {
             "vendor": vendor,
             "invoice_number": invoice_number or f"INV-{abs(hash(text)) % 100000:05d}",
-            "date": formatted_date or datetime.utcnow().strftime("%Y-%m-%d"),
+            "date": formatted_date or datetime.now(timezone.utc).strftime("%Y-%m-%d"),
             "currency": currency,
             "subtotal": subtotal,
             "tax": tax,
@@ -311,19 +311,36 @@ DOCUMENT TEXT:
     async def parse_document(self, file_bytes: bytes, filename: str) -> InvoiceData:
         """
         Master extraction pipeline:
-        1. Extract text from PDF or Image
+        1. Extract text from PDF, Image, or plain text document
         2. Attempt Open-weight model (Gemma 2 / Ollama)
         3. Deterministic NLP extraction fallback
         4. Tax classification & Schedule C mapping
         5. Audit verification & Anomaly detection
         """
         raw_text = ""
-        filename_lower = filename.lower()
+        filename_lower = (filename or "").lower()
         
         if filename_lower.endswith(".pdf"):
             raw_text = self.extract_text_from_pdf(file_bytes)
+            # If PDF parser extracted nothing (e.g. text file saved with .pdf or text stream), fallback to utf-8
+            if not raw_text.strip():
+                try:
+                    raw_text = file_bytes.decode("utf-8", errors="ignore").strip()
+                except Exception:
+                    pass
         elif any(filename_lower.endswith(ext) for ext in [".png", ".jpg", ".jpeg", ".webp"]):
             raw_text = self.extract_text_from_image(file_bytes)
+        elif any(filename_lower.endswith(ext) for ext in [".txt", ".csv", ".tsv", ".md"]):
+            try:
+                raw_text = file_bytes.decode("utf-8", errors="ignore").strip()
+            except Exception:
+                pass
+        else:
+            # Fallback for other file types: attempt utf-8 decode
+            try:
+                raw_text = file_bytes.decode("utf-8", errors="ignore").strip()
+            except Exception:
+                pass
 
         # Fallback if raw text is empty (e.g. image with no OCR or binary)
         if not raw_text.strip():
@@ -336,7 +353,7 @@ DOCUMENT TEXT:
             extracted = {
                 "vendor": ai_result.get("vendor", "Unknown Vendor"),
                 "invoice_number": ai_result.get("invoice_number", "INV-UNKNOWN"),
-                "date": ai_result.get("date", datetime.utcnow().strftime("%Y-%m-%d")),
+                "date": ai_result.get("date", datetime.now(timezone.utc).strftime("%Y-%m-%d")),
                 "currency": ai_result.get("currency", "USD"),
                 "subtotal": float(ai_result.get("subtotal", 0.0)),
                 "tax": float(ai_result.get("tax", 0.0)),

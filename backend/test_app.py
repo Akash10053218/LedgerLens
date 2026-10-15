@@ -96,6 +96,16 @@ class TestLedgerLens(unittest.TestCase):
         self.assertEqual(result["subtotal"], 60.00)
         self.assertEqual(result["currency"], "USD")
 
+    def test_text_document_parsing(self):
+        import asyncio
+        sample_bytes = b"Render Services Inc.\nInvoice #: INV-RND-1001\nDate: 2026-10-14\nTotal: $120.00\nSubtotal: $120.00\n"
+        
+        parsed = asyncio.run(self.extractor.parse_document(sample_bytes, "render_invoice.txt"))
+        self.assertEqual(parsed.vendor, "Render Services Inc.")
+        self.assertEqual(parsed.total, 120.00)
+        self.assertEqual(parsed.category, "Software & Cloud")
+        self.assertEqual(parsed.schedule_c_line, "Line 18: Office expense (Software/SaaS)")
+
 
 if __name__ == "__main__":
     unittest.main()

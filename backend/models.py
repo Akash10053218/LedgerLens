@@ -5,7 +5,7 @@ Pydantic schemas for Invoices, Expense Line Items, Audit Flags, and Tax Summarie
 
 from typing import List, Optional, Dict, Any
 from pydantic import BaseModel, Field
-from datetime import datetime
+from datetime import datetime, timezone
 import uuid
 
 
@@ -46,7 +46,7 @@ class InvoiceData(BaseModel):
     confidence_score: float = 0.85
     extraction_method: str = "Hybrid Open AI"
     raw_text: Optional[str] = None
-    created_at: str = Field(default_factory=lambda: datetime.utcnow().isoformat())
+    created_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
 
 
 class ExpenseSummary(BaseModel):

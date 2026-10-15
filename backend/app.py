@@ -11,6 +11,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse, JSONResponse, Response
 from fastapi.middleware.cors import CORSMiddleware
 import os
+from datetime import datetime, timezone
 
 from .models import InvoiceData, ExpenseSummary, AISettings
 from .extractor import DocumentExtractor
@@ -67,7 +68,8 @@ async def upload_invoice(file: UploadFile = File(...)):
         raise HTTPException(status_code=400, detail="Uploaded file is empty.")
 
     # Run extraction
-    parsed = await extractor.parse_document(file_bytes, file.filename)
+    filename = file.filename or "uploaded_invoice.pdf"
+    parsed = await extractor.parse_document(file_bytes, filename)
     
     # Check for duplicate in store (same vendor, amount, date)
     for existing in invoices_store:
@@ -200,7 +202,7 @@ def export_report(tax_rate: float = Query(30.0)):
     
     md = []
     md.append("# 📑 LedgerLens Freelancer Tax & Audit Summary Report")
-    md.append(f"**Generated:** {os.popen('date -u').read().strip() or '2026-10-16'}")
+    md.append(f"**Generated:** {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC')}")
     md.append(f"**Audit Risk Rating:** {summary.audit_risk_score} Risk | **Audit Flags Detected:** {summary.flagged_issues_count}\n")
     
     md.append("## 💵 Financial Overview")

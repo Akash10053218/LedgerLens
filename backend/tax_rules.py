@@ -4,7 +4,7 @@ Encodes IRS Schedule C deductibility logic, business expense classifications,
 and compliance checks.
 """
 
-from typing import Tuple, List, Dict, Any
+from typing import Tuple, List, Dict, Any, Optional
 from .models import AuditFlag
 
 
@@ -130,9 +130,9 @@ def audit_check_invoice(
     subtotal: float,
     tax: float,
     total: float,
-    date: str,
-    category: str,
-    line_items: list = None
+    date: Optional[str] = None,
+    category: str = "General Business Expense",
+    line_items: Optional[list] = None
 ) -> List[AuditFlag]:
     """
     Evaluates an invoice against standard freelance audit heuristics and IRS rules.

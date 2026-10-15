@@ -67,6 +67,10 @@ function setupEventListeners() {
     taxSlider.addEventListener('input', (e) => {
         currentTaxRate = parseFloat(e.target.value);
         taxRateDisplay.textContent = `${currentTaxRate}%`;
+        const exportBtn = document.getElementById('btnExportReport');
+        if (exportBtn) {
+            exportBtn.href = `/api/export/report?tax_rate=${currentTaxRate}`;
+        }
         fetchSummary();
     });
 }
@@ -362,10 +366,10 @@ async function deleteInvoice(invoiceId) {
 
 // 1-Click Sample Inserter for quick testing
 async function loadSamplePreset(vendorName, totalAmount, categoryName, desc) {
-    const fakeText = `${vendorName}\nInvoice #: INV-DEMO-${Math.floor(Math.random() * 89999 + 10000)}\nDate: 2026-10-15\nDescription: ${desc}\nSubtotal: $${(totalAmount * 0.9).toFixed(2)}\nTax: $${(totalAmount * 0.1).toFixed(2)}\nTotal Amount: $${totalAmount.toFixed(2)}`;
+    const fakeText = `${vendorName}\nInvoice #: INV-DEMO-${Math.floor(Math.random() * 89999 + 10000)}\nDate: 2026-10-15\nCategory: ${categoryName}\nDescription: ${desc}\nSubtotal: $${(totalAmount * 0.9).toFixed(2)}\nTax: $${(totalAmount * 0.1).toFixed(2)}\nTotal Amount: $${totalAmount.toFixed(2)}`;
     
     const blob = new Blob([fakeText], { type: 'text/plain' });
-    const file = new File([blob], `${vendorName.toLowerCase().replace(/[^a-z0-9]/g, '_')}_receipt.pdf`, { type: 'application/pdf' });
+    const file = new File([blob], `${vendorName.toLowerCase().replace(/[^a-z0-9]/g, '_')}_receipt.txt`, { type: 'text/plain' });
     
     await handleFileUpload(file);
 }
@@ -385,7 +389,18 @@ async function resetToDefaults() {
 }
 
 // Open AI Settings Modal
-function openSettingsModal() {
+async function openSettingsModal() {
+    try {
+        const res = await fetch('/api/settings');
+        if (res.ok) {
+            const data = await res.json();
+            if (data.provider) document.getElementById('aiProviderSelect').value = data.provider;
+            if (data.model_name) document.getElementById('aiModelInput').value = data.model_name;
+            if (data.ollama_url) document.getElementById('aiOllamaUrl').value = data.ollama_url;
+        }
+    } catch (e) {
+        console.warn('Could not load current settings:', e);
+    }
     document.getElementById('settingsModal').classList.add('active');
 }
 
