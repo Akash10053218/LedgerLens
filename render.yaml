@@ -1,0 +1,13 @@
+# Render Blueprint Specification for LedgerLens
+# 1-Click Zero-Config Deployment on Render
+services:
+  - type: web
+    name: ledgerlens
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn backend.app:app --host 0.0.0.0 --port $PORT
+    plan: free
+    autoDeploy: true
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9

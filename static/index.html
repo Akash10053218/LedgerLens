@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LedgerLens — Privacy-First AI Invoice & Expense Auditor for Freelancers</title>
+    <meta name="description" content="Open-source AI invoice, receipt, and expense auditor for freelancers and solopreneurs. Keep client data private, categorize IRS Schedule C deductions, and audit receipts with zero vendor lock-in.">
+    <meta name="keywords" content="invoice auditor, receipt scanner, open source AI, Gemma 2, freelance bookkeeping, tax deductions, Schedule C, privacy-first AI">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <!-- Top Navigation Bar -->
+    <nav class="navbar" id="navbar">
+        <a href="/" class="brand" id="brandLink">
+            <div class="brand-icon">
+                <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            </div>
+            <div>
+                <div class="brand-title">Ledger<span>Lens</span></div>
+            </div>
+            <span class="brand-badge" id="openSourceBadge">Open-Weight AI</span>
+        </a>
+
+        <div class="nav-actions">
+            <button class="btn btn-secondary btn-sm" id="btnSettings" onclick="openSettingsModal()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                <span>AI Model Config</span>
+            </button>
+            <a href="/api/export/csv" class="btn btn-secondary btn-sm" id="btnExportCsv">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                <span>Export CSV</span>
+            </a>
+            <a href="/api/export/report" class="btn btn-emerald btn-sm" id="btnExportReport" target="_blank">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+                <span>Tax Audit Report</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <main class="app-container">
+        <!-- Hero Header -->
+        <header class="hero-header">
+            <div class="hero-text">
+                <h1>Freelance AI Invoice & Expense Auditor</h1>
+                <p>Private, zero-data-leakage invoice parsing and IRS Schedule C tax audit intelligence. Powered by open-weight models (Gemma 2 / Hybrid Open NLP) deployed natively on Render.</p>
+            </div>
+            <div class="privacy-banner" id="privacyBanner">
+                <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                <span>100% Client Data Confidentiality: No proprietary LLM training on invoices</span>
+            </div>
+        </header>
+
+        <!-- KPI Cards Grid -->
+        <section class="kpi-grid" aria-label="Financial Summary Cards">
+            <!-- Total Spend -->
+            <div class="kpi-card" id="cardTotalSpend">
+                <div class="kpi-header">
+                    <span class="kpi-title">Gross Expenses</span>
+                    <div class="kpi-icon" style="background: rgba(99, 102, 241, 0.15); color: var(--indigo);">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                    </div>
+                </div>
+                <div class="kpi-value" id="kpiTotalSpend">$0.00</div>
+                <div class="kpi-sub" id="kpiDocsCount">0 Verified Invoices</div>
+            </div>
+
+            <!-- Deductible Spend -->
+            <div class="kpi-card" id="cardDeductible" style="--accent-gradient: linear-gradient(90deg, #10b981, #06b6d4);">
+                <div class="kpi-header">
+                    <span class="kpi-title">Schedule C Deductions</span>
+                    <div class="kpi-icon" style="background: rgba(16, 185, 129, 0.15); color: var(--emerald);">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    </div>
+                </div>
+                <div class="kpi-value" id="kpiDeductible" style="color: var(--emerald);">$0.00</div>
+                <div class="kpi-sub">IRS Qualified Business Write-offs</div>
+            </div>
+
+            <!-- Tax Savings -->
+            <div class="kpi-card" id="cardTaxSavings" style="--accent-gradient: linear-gradient(90deg, #f59e0b, #ef4444);">
+                <div class="kpi-header">
+                    <span class="kpi-title">Estimated Tax Savings</span>
+                    <div class="kpi-icon" style="background: rgba(245, 158, 11, 0.15); color: var(--amber);">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                    </div>
+                </div>
+                <div class="kpi-value" id="kpiTaxSavings" style="color: var(--amber);">$0.00</div>
+                <div class="kpi-sub">Cash saved at current marginal rate</div>
+            </div>
+
+            <!-- Audit Status -->
+            <div class="kpi-card" id="cardAuditRisk" style="--accent-gradient: linear-gradient(90deg, #8b5cf6, #ec4899);">
+                <div class="kpi-header">
+                    <span class="kpi-title">Audit Readiness</span>
+                    <div class="kpi-icon" style="background: rgba(139, 92, 246, 0.15); color: #a78bfa;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    </div>
+                </div>
+                <div class="kpi-value" id="kpiAuditRisk">Low</div>
+                <div class="kpi-sub" id="kpiFlagsCount">0 Potential Audit Flags</div>
+            </div>
+        </section>
+
+        <!-- Main Workspace Layout -->
+        <div class="workspace-grid">
+            <!-- Left Sidebar: Dropzone, Preset Invoices & Tax Slider -->
+            <aside class="sidebar-panel">
+                <!-- Dropzone Card -->
+                <div class="card" id="dropzoneCard">
+                    <div class="card-title">
+                        <span>Ingest Documents</span>
+                        <span style="font-size: 0.75rem; color: var(--text-sub);">PDF / PNG / JPG</span>
+                    </div>
+                    <div class="card-desc">Drag & drop receipts or invoices. Processed securely via open-weight inference.</div>
+
+                    <div class="dropzone" id="dropzone">
+                        <div class="dropzone-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                        </div>
+                        <h3>Drop invoice or receipt here</h3>
+                        <p>or click to browse files from your computer</p>
+                        <input type="file" id="fileInput" class="file-input" accept=".pdf,.png,.jpg,.jpeg,.webp">
+                    </div>
+
+                    <!-- 1-Click Test Presets -->
+                    <div class="sample-triggers">
+                        <div class="sample-triggers-title">1-Click Live Test Samples:</div>
+                        <div class="sample-tags">
+                            <button class="sample-chip" onclick="loadSamplePreset('Render Cloud Infrastructure', 145.00, 'Software & Cloud', 'Managed Postgres & Web Service on Render')">+ Render Hosting</button>
+                            <button class="sample-chip" onclick="loadSamplePreset('Upwork Senior React Dev', 950.00, 'Contract Labor', 'Frontend UI/UX Subcontractor')">+ 1099 Subcontractor</button>
+                            <button class="sample-chip" onclick="loadSamplePreset('Blue Bottle Coffee & Bakery', 38.50, 'Business Meals', 'Client sync coffee and breakfast')">+ Client Meal (50%)</button>
+                            <button class="sample-chip" onclick="loadSamplePreset('Apple Park Store', 249.00, 'Office Supplies & Equipment', 'AirPods Max for client conferencing')">+ Tech Hardware</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tax Rate Calculator Card -->
+                <div class="card" id="taxCalculatorCard">
+                    <div class="card-title">
+                        <span>Tax Rate Simulator</span>
+                        <div class="tax-rate-display" id="taxRateDisplay">30%</div>
+                    </div>
+                    <div class="card-desc">Adjust your effective freelance tax bracket (Self-Employment + Federal + State) to see real cash savings:</div>
+
+                    <div class="tax-widget">
+                        <input type="range" id="taxSlider" class="range-slider" min="15" max="45" step="1" value="30">
+                        <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-sub); margin-top: 0.5rem;">
+                            <span>15% (Low Bracket)</span>
+                            <span>30% (Avg Freelance)</span>
+                            <span>45% (High Tier)</span>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border-color);">
+                        <div style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.5rem;">Category Allocation</div>
+                        <div class="category-progress-list" id="categoryProgressContainer">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Right Content: Invoices Table -->
+            <section class="main-content">
+                <div class="card">
+                    <div class="content-header">
+                        <div>
+                            <div class="card-title">Audited Financial Records</div>
+                            <div class="card-desc" style="margin-bottom: 0;">Verified invoices with IRS compliance classifications and anomaly checks.</div>
+                        </div>
+
+                        <div class="search-filter-box">
+                            <input type="text" id="searchInput" class="input-search" placeholder="Search by vendor, category, invoice #...">
+                            <button class="btn btn-secondary btn-sm" onclick="resetToDefaults()" title="Reset to standard sample set">
+                                <span>Reset Demo</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Table -->
+                    <div class="table-container" style="margin-top: 1.25rem;">
+                        <table class="invoice-table" id="invoicesTable">
+                            <thead>
+                                <tr>
+                                    <th>Vendor / File</th>
+                                    <th>Date</th>
+                                    <th>Category</th>
+                                    <th>Total Spend</th>
+                                    <th>Deductible</th>
+                                    <th>Audit Flags</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="invoicesTableBody">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>LedgerLens</strong> — Built for the <strong>Hacktoberfest Open-Source AI Challenge (Week 2: Side Hustle)</strong>.</p>
+            <p style="margin-top: 0.35rem;">Optimized for native deployment on <a href="https://render.com" target="_blank" rel="noopener">Render</a>. Licensed under MIT.</p>
+        </footer>
+    </main>
+
+    <!-- Modal: Invoice Details & Audit View -->
+    <div class="modal-overlay" id="invoiceModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <div class="modal-title">Invoice Audit & Compliance Inspector</div>
+                <button class="btn-icon" onclick="closeInvoiceModal()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <!-- Audit Flags Alert Box -->
+                <div>
+                    <div class="form-label" style="margin-bottom: 0.5rem;">IRS Audit Flags & Compliance Notes</div>
+                    <div id="modalFlagsList">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+
+                <!-- Form Inputs -->
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Vendor Name</label>
+                        <input type="text" id="modalVendor" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Invoice / Receipt #</label>
+                        <input type="text" id="modalInvNumber" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Date</label>
+                        <input type="date" id="modalDate" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Expense Category</label>
+                        <input type="text" id="modalCategory" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Subtotal ($)</label>
+                        <input type="number" step="0.01" id="modalSubtotal" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Tax / VAT ($)</label>
+                        <input type="number" step="0.01" id="modalTax" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Total Amount ($)</label>
+                        <input type="number" step="0.01" id="modalTotal" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Deductible %</label>
+                        <input type="number" step="1" id="modalDeductiblePct" class="form-control">
+                    </div>
+                    <div class="form-group full">
+                        <label class="form-label">IRS Business Purpose Substantiation</label>
+                        <textarea id="modalPurpose" class="form-control" rows="2" placeholder="Required for IRS audit defense: explain business relation..."></textarea>
+                    </div>
+                </div>
+
+                <!-- Extraction Provenance -->
+                <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 0.85rem; font-size: 0.8rem; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <span style="color: var(--text-sub);">Schedule C Line:</span> <strong id="modalScheduleC" style="color: var(--indigo);">Line 18: Office Expense</strong>
+                    </div>
+                    <div>
+                        <span style="color: var(--text-sub);">Model Provenance:</span> <strong id="modalConfidence" style="color: var(--emerald);">98% (Gemma 2)</strong>
+                    </div>
+                </div>
+
+                <!-- Itemized Breakdown -->
+                <div>
+                    <div class="form-label" style="margin-bottom: 0.5rem;">Extracted Line Items</div>
+                    <div id="modalLineItems">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary btn-sm" onclick="closeInvoiceModal()">Cancel</button>
+                <button class="btn btn-primary btn-sm" onclick="saveInvoiceChanges()">Save Audit Edits</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: AI Model Configuration -->
+    <div class="modal-overlay" id="settingsModal">
+        <div class="modal-card" style="max-width: 520px;">
+            <div class="modal-header">
+                <div class="modal-title">Open AI Engine Settings</div>
+                <button class="btn-icon" onclick="closeSettingsModal()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
+                    LedgerLens uses open-weight models for document understanding. Select your local or hosted open-source provider:
+                </p>
+
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label class="form-label">Inference Mode / Provider</label>
+                    <select id="aiProviderSelect" class="form-control">
+                        <option value="hybrid">Hybrid (Local Open Deterministic NLP + Regex) - 100% Offline</option>
+                        <option value="ollama">Local Ollama (Gemma 2 / Llama 3 / Mistral)</option>
+                        <option value="huggingface">Hugging Face Inference API (google/gemma-2-9b-it)</option>
+                    </select>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label class="form-label">Open-Weight Model Name</label>
+                    <input type="text" id="aiModelInput" class="form-control" value="gemma2:9b" placeholder="e.g. gemma2:9b, llama3.2-vision">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Ollama Host URL</label>
+                    <input type="text" id="aiOllamaUrl" class="form-control" value="http://localhost:11434">
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary btn-sm" onclick="closeSettingsModal()">Close</button>
+                <button class="btn btn-primary btn-sm" onclick="saveAISettings()">Save Configuration</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Scripts -->
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
